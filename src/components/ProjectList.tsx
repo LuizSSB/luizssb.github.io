@@ -5,10 +5,6 @@ type ProjectListProps = {
   projects: Project[];
 };
 
-function collectProjectTags(project: Project) {
-  return [...project.types, ...project.languages];
-}
-
 function formatDate(date: Project["date"]) {
   return new Intl.DateTimeFormat("en", {
     month: "short",
@@ -22,13 +18,16 @@ function sortProjectsByDate(projects: Project[]) {
   });
 }
 
-function collectTags(projects: Project[]) {
+function collectTags(
+  projects: Project[],
+  pickTags: (project: Project) => string[],
+) {
   const tagStats = new Map<string, { count: number; mostRecentDate: number }>();
 
   for (const project of projects) {
     const projectDate = new Date(project.date).getTime();
 
-    for (const tag of collectProjectTags(project)) {
+    for (const tag of pickTags(project)) {
       const current = tagStats.get(tag);
 
       if (!current) {
@@ -59,16 +58,17 @@ function collectTags(projects: Project[]) {
 export function ProjectList({ projects }: ProjectListProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const sortedProjects = sortProjectsByDate(projects);
-  const tags = collectTags(sortedProjects);
+  const languageTags = collectTags(sortedProjects, (project) => project.languages);
+  const typeTags = collectTags(sortedProjects, (project) => project.types);
   const filteredProjects = selectedTag
     ? sortedProjects.filter((project) =>
-        collectProjectTags(project).includes(selectedTag),
+        [...project.languages, ...project.types].includes(selectedTag),
       )
     : sortedProjects;
 
   return (
-    <section className="rounded-[2rem] border border-[var(--color-ink)]/10 bg-white/70 p-6 backdrop-blur sm:p-8">
-      <div className="mb-6 flex items-end justify-between gap-4">
+    <section className="rounded-[2rem] border border-[var(--color-ink)]/10 bg-white/70 p-4 backdrop-blur sm:p-8">
+      <div className="mb-5 flex items-end justify-between gap-4 sm:mb-6">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-[var(--color-muted)]">
             Selected Work
@@ -82,7 +82,7 @@ export function ProjectList({ projects }: ProjectListProps) {
         </p>
       </div>
 
-      <div className="mb-6 flex flex-wrap gap-3">
+      <div className="mb-6 space-y-4">
         <button
           type="button"
           className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
@@ -95,27 +95,56 @@ export function ProjectList({ projects }: ProjectListProps) {
           All
         </button>
 
-        {tags.map((tag) => (
-          <button
-            key={tag.tag}
-            type="button"
-            className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-              selectedTag === tag.tag
-                ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-paper)]"
-                : "border-[var(--color-ink)]/10 bg-white/80 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-            }`}
-            onClick={() => setSelectedTag(tag.tag)}
-          >
-            {tag.tag} ({tag.count})
-          </button>
-        ))}
+        <div className="space-y-2">
+          <p className="text-xs uppercase tracking-[0.25em] text-[var(--color-muted)]">
+            Languages
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {languageTags.map((tag) => (
+              <button
+                key={tag.tag}
+                type="button"
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                  selectedTag === tag.tag
+                    ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-paper)]"
+                    : "border-[var(--color-ink)]/10 bg-white/80 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+                }`}
+                onClick={() => setSelectedTag(tag.tag)}
+              >
+                {tag.tag} ({tag.count})
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs uppercase tracking-[0.25em] text-[var(--color-muted)]">
+            Project types
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {typeTags.map((tag) => (
+              <button
+                key={tag.tag}
+                type="button"
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                  selectedTag === tag.tag
+                    ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-paper)]"
+                    : "border-[var(--color-ink)]/10 bg-white/80 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+                }`}
+                onClick={() => setSelectedTag(tag.tag)}
+              >
+                {tag.tag} ({tag.count})
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">
         {filteredProjects.map((project) => (
           <article
             key={project.name}
-            className="rounded-[1.6rem] border border-[var(--color-ink)]/10 bg-[var(--color-card)] p-5 transition hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(18,18,18,0.08)]"
+            className="rounded-[1.6rem] border border-[var(--color-ink)]/10 bg-[var(--color-card)] p-4 transition hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(18,18,18,0.08)] sm:p-5"
           >
             <div className="flex flex-wrap items-center gap-3">
               {project.types.map((type) => (

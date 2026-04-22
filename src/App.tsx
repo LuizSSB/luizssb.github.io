@@ -5,8 +5,8 @@ import { ProjectList } from "./components/ProjectList";
 export default function App() {
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)]">
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-6 sm:px-10 lg:px-12">
-        <header className="mb-10 flex items-center justify-between border-b border-[var(--color-ink)]/10 pb-5">
+      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-4 sm:px-10 sm:py-6 lg:px-12">
+        <header className="mb-8 flex items-center justify-between border-b border-[var(--color-ink)]/10 pb-4 sm:mb-10 sm:pb-5">
           <p className="text-xs font-medium uppercase tracking-[0.35em] text-[var(--color-muted)]">
             Portfolio
           </p>

@@ -6,7 +6,7 @@ type ProfileHeaderProps = {
 
 export function ProfileHeader({ profile }: ProfileHeaderProps) {
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-[var(--color-ink)]/10 bg-[var(--color-card)] p-8 shadow-[0_24px_80px_rgba(18,18,18,0.08)] sm:p-10">
+    <section className="relative overflow-hidden rounded-[2rem] border border-[var(--color-ink)]/10 bg-[var(--color-card)] p-5 shadow-[0_24px_80px_rgba(18,18,18,0.08)] sm:p-10">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.52),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(23,23,23,0.06),_transparent_30%)]" />
       <div className="relative flex flex-col gap-8">
         <div className="space-y-6">
